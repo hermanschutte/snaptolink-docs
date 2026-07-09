@@ -1,0 +1,70 @@
+---
+title: "Authentication"
+description: "Tokens, abilities, plan requirements, and rate limits."
+---
+
+The REST API and the MCP server share one credential: a personal API token created in the dashboard under **Settings** then **API**.
+
+## Tokens
+
+Tokens are shown once, at creation. Store the value somewhere safe. You can revoke a token at any time from the same screen, which immediately cuts off both API and MCP access for it.
+
+The REST API takes the token in a header:
+
+```bash
+curl https://snapto.link/api/v1/profiles \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+The MCP server takes it in the URL, because most MCP clients cannot send custom headers:
+
+```
+https://snapto.link/mcp/YOUR_TOKEN
+```
+
+<Warning>
+  Because the MCP token sits in the URL, treat the whole URL as a secret. Do not paste it into a shared config file, a screenshot, or a support ticket.
+</Warning>
+
+## Abilities
+
+Every token carries a set of abilities. Grant only what the integration needs. A reporting script does not need write access.
+
+| Ability | What it unlocks |
+| --- | --- |
+| `profiles:read` | Read profiles, and the runtime schema |
+| `profiles:write` | Create and update profiles, publish and unpublish |
+| `elements:read` | Read a profile's links |
+| `elements:write` | Create, update, delete, and reorder links, and set social links |
+| `analytics:read` | Read visit and click analytics |
+
+A request that needs an ability the token lacks returns `403`.
+
+## Plan requirement
+
+API and MCP access requires an active paid subscription, Lite or above. Every plan starts with a 7 day free trial, and the trial includes full access.
+
+Without an active subscription, REST requests return `403` and MCP requests return a JSON-RPC error.
+
+## Rate limits
+
+The REST API allows **60 requests per minute** per user. Over the limit, you get `429`.
+
+The MCP endpoint allows **60 requests per minute** per IP address.
+
+## Errors
+
+The REST API uses standard status codes.
+
+| Status | Meaning |
+| --- | --- |
+| `401` | Missing or invalid token, or the resource is not yours |
+| `403` | The token lacks the required ability, or there is no active subscription |
+| `404` | The resource does not exist |
+| `422` | Validation failed. The response body lists the field errors |
+| `429` | Rate limit exceeded |
+
+Ownership failures return `401` rather than `404`. A profile that is not yours is treated as an authorisation failure, not a missing resource.
+
+Over MCP, the same conditions come back as tool errors with a readable message rather than HTTP status codes.

@@ -1,0 +1,26 @@
+---
+title: "Analytics"
+description: "Read visit and click analytics for a profile."
+---
+
+## Summary
+
+```bash
+curl "https://snapto.link/api/v1/profiles/PROFILE_UUID/analytics/summary?days=7" \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+Requires `analytics:read`. Returns visits, clicks, top links, and top countries for the window.
+
+## The days parameter
+
+| Parameter | Default | Range |
+| --- | --- | --- |
+| `days` | `7` | 1 to your plan's maximum |
+
+`days` is clamped rather than rejected. Ask for more days than your plan allows and you get your plan's maximum back, not an error. Ask for fewer than 1 and you get 1.
+
+<Note>
+  Analytics are collected asynchronously, so the most recent hits can take a short while to appear.
+</Note>

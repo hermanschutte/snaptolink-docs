@@ -1,0 +1,54 @@
+---
+title: "Tools"
+description: "The 12 tools exposed by the SnapToLink MCP server."
+---
+
+The server exposes 12 tools. Each one requires an ability on your token, and a tool whose ability is missing returns an error rather than silently doing nothing.
+
+| Tool | Ability | What it does |
+| --- | --- | --- |
+| `profile_list` | `profiles:read` | List all profiles you own |
+| `profile_get` | `profiles:read` | One profile with its ordered elements and template |
+| `profile_schema` | `profiles:read` | Discover valid element types, field constraints, templates, and social platform keys |
+| `profile_create` | `profiles:write` | Create a profile |
+| `profile_update` | `profiles:write` | Publish, unpublish, retitle, change template or design |
+| `element_list` | `elements:read` | A profile's links in display order |
+| `element_create` | `elements:write` | Add a link or header |
+| `element_update` | `elements:write` | Update an existing link |
+| `element_delete` | `elements:write` | Remove a link. Irreversible |
+| `element_reorder` | `elements:write` | Reorder a profile's links |
+| `social_link_set` | `elements:write` | Set a social or contact link from a platform key and handle |
+| `analytics_summary` | `analytics:read` | Visits, clicks, and top links for a recent window |
+
+## Start with profile_schema
+
+`profile_schema` exists so an agent does not need these docs in its context. It returns, at runtime:
+
+- the valid element types
+- field constraints for profiles and elements
+- the templates available to your plan
+- the social platform keys and the handle format each one expects
+
+Call it before creating or updating anything.
+
+## Notes on specific tools
+
+### element_update
+
+`type`, `enabled_for_display`, and `enabled_for_download` are required by the underlying validator. Send the element's current values for any field you are not changing.
+
+### element_reorder
+
+Pass element ids in the order you want. Positions are assigned from the array order. Ids that do not belong to the profile are rejected, so a typo fails loudly instead of silently reordering nothing.
+
+### social_link_set
+
+Pass a platform key and the bare handle. The destination prefix is applied on the server, so you send `acme`, not `https://instagram.com/acme`. Setting the same platform twice updates the existing link rather than adding a second one.
+
+### analytics_summary
+
+The requested window is clamped to your plan's allowed range and reporting delay. Ask for more days than your plan permits and you get the maximum, not an error.
+
+### element_delete
+
+Irreversible. The server's own instructions tell agents to confirm with a human first, but that is guidance, not enforcement. A token with `elements:write` can delete.

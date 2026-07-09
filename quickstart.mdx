@@ -1,47 +1,80 @@
 ---
 title: "Quickstart"
-description: "Begin with a guide on the fastest path to a successful outcome"
+description: "Create a token, make your first API call, and connect an agent."
 ---
 
-Describe how someone begins using your product. What is the first thing they need to do? Are there any prerequisites?
-
-A quickstart should take someone from zero to using your product. They'll get a quick win and a sense of what they can accomplish.
+This takes you from nothing to a working call against your own profile.
 
 ## Prerequisites
 
-Before you begin, you must have:
+- A SnapToLink account with an active Lite plan or above. The 7 day free trial counts.
+- At least one profile. Create one in the dashboard if you have not yet.
 
-- Requirement one (for example, Node.js 18+, a free account, an API key)
-- Requirement two (for example, a compatible device, a compatible browser, a compatible operating system)
-
-## Get started
+## Create a token
 
 <Steps>
-  <Step title="Install">
-    Describe how to install your product or sign up.
-
-    ```bash
-    npm install your-package
-    ```
+  <Step title="Open the API settings">
+    In the dashboard, go to **Settings** then **API**.
   </Step>
-  <Step title="Configure">
-    Describe any setup or configuration needed before first use.
+  <Step title="Name the token and pick its abilities">
+    Grant only what the integration needs. To read your links and analytics, `profiles:read`, `elements:read`, and `analytics:read` are enough.
 
-    ```bash
-    your-cli init
-    ```
+    See [Authentication](/authentication) for what each ability unlocks.
   </Step>
-  <Step title="Run it">
-    Show the first thing a user does to see it working.
-
-    ```bash
-    your-cli start
-    ```
+  <Step title="Copy the token">
+    The token is shown once. Store it somewhere safe. If you lose it, revoke it and create another.
   </Step>
 </Steps>
 
-<Tip>
-  Give people a way to get help. This could be a link to a support page, a chat with a customer support agent, or a forum for your product.
+<Warning>
+  A token acts as you. Never commit one to source control or paste it into a public issue.
+</Warning>
 
-  Example: Need help? Reach out to us at [support@yourcompany.com](mailto:support@yourcompany.com).
-</Tip>
+## Make your first call
+
+List your profiles:
+
+```bash
+curl https://snapto.link/api/v1/profiles \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+You get back your profiles, each with an `id` you can use in the other endpoints.
+
+Now add a link to one of them. Swap in a profile `id` from the previous response:
+
+```bash
+curl -X POST https://snapto.link/api/v1/elements \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile_id": "PROFILE_UUID",
+    "type": "link",
+    "name": "My new video",
+    "content": "https://youtube.com/watch?v=dQw4w9WgXcQ",
+    "enabled_for_display": true,
+    "enabled_for_download": false
+  }'
+```
+
+Load your public page and the link is there. Creating an element needs a token with `elements:write`.
+
+## Connect an agent instead
+
+If you would rather talk to your page than write requests against it, point an MCP client at the hosted server. The same token works.
+
+```bash
+claude mcp add --transport http snaptolink https://snapto.link/mcp/YOUR_TOKEN
+```
+
+Then ask it to add a link, reorder your page, or tell you which link got the most clicks this week.
+
+<Card title="MCP server setup" icon="bot" href="/mcp/overview">
+  Setup for Claude Code, Claude Desktop, Cursor, and ChatGPT.
+</Card>
+
+## Get help
+
+Something not working? Email [support@snapto.link](mailto:support@snapto.link).

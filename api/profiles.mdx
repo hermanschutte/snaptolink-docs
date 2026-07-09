@@ -1,0 +1,73 @@
+---
+title: "Profiles"
+description: "List, read, create, and update link-in-bio profiles."
+---
+
+A profile is one link-in-bio page. It has a public handle (`snapto.link/{url}`), a title, a bio, a template, and an ordered list of elements.
+
+## List profiles
+
+```bash
+curl https://snapto.link/api/v1/profiles \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+Requires `profiles:read`. Returns every profile you own.
+
+## Get a profile
+
+```bash
+curl https://snapto.link/api/v1/profiles/PROFILE_UUID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+Requires `profiles:read`. Returns the profile with its ordered elements and its template.
+
+## Create a profile
+
+```bash
+curl -X POST https://snapto.link/api/v1/profiles \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "name": "Launch page",
+    "url": "acme-launch",
+    "enabled": true,
+    "title": "Acme",
+    "bio": "Everything we ship, in one place."
+  }'
+```
+
+Requires `profiles:write`.
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `name` | Yes | Internal name. Max 255 characters. |
+| `enabled` | Yes | `true` publishes the page, `false` keeps it unpublished. |
+| `url` | Yes | The public handle. 3 to 255 characters, letters, numbers, dots, underscores, and hyphens only. Cannot start with a dot. Must be unique, and some handles are reserved. |
+| `title` | No | Public heading. Max 255. |
+| `bio` | No | Public bio. Max 255. |
+| `description` | No | Internal description. |
+| `template_id` | No | A template UUID. Premium templates require a paid plan. |
+
+Creating a profile counts against your plan's profile limit.
+
+## Update a profile
+
+```bash
+curl -X PUT https://snapto.link/api/v1/profiles/PROFILE_UUID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "title": "Acme, now with more links",
+    "enabled": true
+  }'
+```
+
+Requires `profiles:write`.
+
+Set `enabled` to publish or unpublish the public page. Design fields (`buttons_color`, `buttons_text_color`, `text_color`, `buttons_styles`, `hide_logo`, `google_analytics`, and `url_display: subdomain`) require a paid plan and return an error on lower plans.

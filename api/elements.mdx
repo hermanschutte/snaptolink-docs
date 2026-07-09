@@ -1,0 +1,110 @@
+---
+title: "Elements"
+description: "Create, update, delete, and reorder the links on a profile."
+---
+
+An element is one row on a link page. Most are links, but headers and contact rows are elements too.
+
+## Element types
+
+| Type | What it is |
+| --- | --- |
+| `link` | A titled link to a URL |
+| `header` | A section heading, with no destination |
+| `socialmedia` | A social platform icon link |
+| `telephone` | A phone number |
+| `email` | An email address |
+| `contactcard` | A downloadable contact card |
+
+## List a profile's elements
+
+```bash
+curl https://snapto.link/api/v1/profiles/PROFILE_UUID/elements \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+Requires `elements:read`. Returns elements in display order.
+
+## Create an element
+
+```bash
+curl -X POST https://snapto.link/api/v1/elements \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile_id": "PROFILE_UUID",
+    "type": "link",
+    "name": "My new video",
+    "content": "https://youtube.com/watch?v=dQw4w9WgXcQ",
+    "enabled_for_display": true,
+    "enabled_for_download": false
+  }'
+```
+
+Requires `elements:write`.
+
+| Field | Required | Notes |
+| --- | --- | --- |
+| `profile_id` | Yes | The profile the element belongs to. |
+| `type` | Yes | One of the types above. |
+| `enabled_for_display` | Yes | Whether the element shows on the public page. |
+| `enabled_for_download` | Yes | Whether the element is included in the contact card download. |
+| `name` | No | The label. Max 255. |
+| `content` | No | The destination. Max 255. |
+| `description` | No | Optional description. |
+| `order` | No | Position within its type. Omit it and the element is appended to the end. |
+
+Creating a link counts against your plan's link limit.
+
+## Update an element
+
+```bash
+curl -X PUT https://snapto.link/api/v1/elements/ELEMENT_UUID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "type": "link",
+    "name": "My new video (updated)",
+    "content": "https://youtube.com/watch?v=dQw4w9WgXcQ",
+    "enabled_for_display": true,
+    "enabled_for_download": false
+  }'
+```
+
+Requires `elements:write`.
+
+<Warning>
+  `PUT` is a full representation, not a patch. `type`, `enabled_for_display`, and `enabled_for_download` are required on every update. If you omit them, the request fails validation. Fetch the element first and resend its current values for anything you are not changing.
+</Warning>
+
+## Reorder elements
+
+```bash
+curl -X POST https://snapto.link/api/v1/elements/reorder \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json" \
+  -H "Content-Type: application/json" \
+  -d '{
+    "profile_id": "PROFILE_UUID",
+    "elements": [
+      { "id": "ELEMENT_UUID_1" },
+      { "id": "ELEMENT_UUID_2" },
+      { "id": "ELEMENT_UUID_3" }
+    ]
+  }'
+```
+
+Requires `elements:write`. The array order becomes the display order. Every id must belong to the given profile.
+
+## Delete an element
+
+```bash
+curl -X DELETE https://snapto.link/api/v1/elements/ELEMENT_UUID \
+  -H "Authorization: Bearer YOUR_TOKEN" \
+  -H "Accept: application/json"
+```
+
+Requires `elements:write`. This is irreversible.

@@ -1,0 +1,47 @@
+---
+title: "Overview"
+description: "Base URL, conventions, and the full endpoint list for REST API v1."
+---
+
+## Base URL
+
+```
+https://snapto.link/api/v1
+```
+
+Every request needs a bearer token and an `Accept: application/json` header. See [Authentication](/authentication).
+
+## Conventions
+
+- **Identifiers are UUIDs.** Profile and element ids are strings, not integers.
+- **`PUT` replaces, it does not patch.** Element updates must resend `type`, `enabled_for_display`, and `enabled_for_download` along with whatever you are changing. Send the element's current values for the fields you do not want to touch.
+- **Booleans are real booleans.** Send `true`, not `"true"` or `1`.
+
+## Endpoints
+
+| Method | Path | Ability |
+| --- | --- | --- |
+| `GET` | `/profiles` | `profiles:read` |
+| `POST` | `/profiles` | `profiles:write` |
+| `GET` | `/profiles/{id}` | `profiles:read` |
+| `PUT` | `/profiles/{id}` | `profiles:write` |
+| `GET` | `/profiles/{id}/elements` | `elements:read` |
+| `GET` | `/profiles/{id}/analytics/summary` | `analytics:read` |
+| `POST` | `/elements` | `elements:write` |
+| `POST` | `/elements/reorder` | `elements:write` |
+| `PUT` | `/elements/{id}` | `elements:write` |
+| `DELETE` | `/elements/{id}` | `elements:write` |
+
+<Card title="Profiles" icon="user" href="/api/profiles">
+  Create, read, and update profiles.
+</Card>
+<Card title="Elements" icon="link" href="/api/elements">
+  The links on a page: create, update, delete, reorder.
+</Card>
+<Card title="Analytics" icon="chart-line" href="/api/analytics">
+  Visits, clicks, and top links.
+</Card>
+
+## Rate limits and errors
+
+60 requests per minute. See [Authentication](/authentication) for the full status code table.
