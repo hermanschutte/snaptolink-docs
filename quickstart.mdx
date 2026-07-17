@@ -63,7 +63,16 @@ Load your public page and the link is there. Creating an element needs a token w
 
 ## Connect an agent instead
 
-If you would rather talk to your page than write requests against it, point an MCP client at the hosted server. The same token works.
+If you would rather talk to your page than write requests against it, connect an MCP client. The quickest path: in the dashboard, go to **Settings** then **Agents**, pick your client, and click **Connect**. You get the exact command or URL to paste, shown once.
+
+In Claude Code, you can also install the official plugin, which bundles the connection plus a skill that makes Claude a careful page manager:
+
+```bash
+claude plugin marketplace add snaptolink/snapto-claude-plugin
+claude plugin install snapto-profile-manager@snapto-plugins
+```
+
+Or point any MCP client at the hosted server directly. The same token from above works:
 
 ```bash
 claude mcp add --transport http snapto https://snapto.link/mcp/YOUR_TOKEN
