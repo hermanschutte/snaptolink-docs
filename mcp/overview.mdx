@@ -11,7 +11,7 @@ Snapto hosts an MCP server, so an agent can read and update your page directly. 
 https://snapto.link/mcp/YOUR_TOKEN
 ```
 
-It speaks Streamable HTTP with JSON-RPC 2.0. Create the token in the dashboard under **Settings** then **API**.
+It speaks Streamable HTTP with JSON-RPC 2.0. The fastest way to connect: in the dashboard, go to **Settings** then **Agents**, pick your client, and click **Connect**. The dialog shows the full URL and the setup command for that client, once. To mint a token with custom abilities instead, use **Settings** then **API**.
 
 <Warning>
   The token is embedded in the URL, because most MCP clients cannot send custom headers. Treat the entire URL as a secret. Revoke the token to cut off access.
@@ -23,12 +23,30 @@ An active paid plan is required, Lite or above. The 7 day free trial counts.
 
 <Tabs>
   <Tab title="Claude Code">
+    Install the official plugin. It bundles the connection plus a skill that makes Claude a careful page manager, and prompts for your token on install:
+
+    ```bash
+    claude plugin marketplace add snaptolink/snapto-claude-plugin
+    claude plugin install snapto-profile-manager@snapto-plugins
+    ```
+
+    Or add the server directly:
+
     ```bash
     claude mcp add --transport http snapto https://snapto.link/mcp/YOUR_TOKEN
     ```
   </Tab>
   <Tab title="Claude Desktop">
-    Add this to your MCP settings JSON:
+    Go to **Settings** then **Connectors**, click **Add custom connector**, name it Snapto, and paste the URL.
+  </Tab>
+  <Tab title="Cursor">
+    Go to **Settings** then **MCP** then **Add server**. Choose the HTTP transport and paste the same URL. The **Connect** dialog on the Agents settings page also gives you a one-click install link.
+  </Tab>
+  <Tab title="ChatGPT">
+    Add a custom connector pointing at the URL. This needs a ChatGPT plan that supports connectors.
+  </Tab>
+  <Tab title="Other clients">
+    Any client that speaks MCP over HTTP works:
 
     ```json
     {
@@ -40,12 +58,6 @@ An active paid plan is required, Lite or above. The 7 day free trial counts.
       }
     }
     ```
-  </Tab>
-  <Tab title="Cursor">
-    Go to **Settings** then **MCP** then **Add server**. Choose the HTTP transport and paste the same URL.
-  </Tab>
-  <Tab title="ChatGPT">
-    Add a custom connector pointing at the URL. This needs a ChatGPT plan that supports connectors.
   </Tab>
 </Tabs>
 
