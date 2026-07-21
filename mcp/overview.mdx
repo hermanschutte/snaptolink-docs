@@ -5,6 +5,8 @@ description: "Connect an AI agent to your link-in-bio page over MCP."
 
 Snapto hosts an MCP server, so an agent can read and update your page directly. No local process to run, no wrapper to install.
 
+There are two ways to connect: a key-in-URL token that works with any MCP client, and OAuth for Claude. Both need an active paid plan, Lite or above. The 7 day free trial counts.
+
 ## Endpoint
 
 ```
@@ -16,8 +18,6 @@ It speaks Streamable HTTP with JSON-RPC 2.0. The fastest way to connect: in the 
 <Warning>
   The token is embedded in the URL, because most MCP clients cannot send custom headers. Treat the entire URL as a secret. Revoke the token to cut off access.
 </Warning>
-
-An active paid plan is required, Lite or above. The 7 day free trial counts.
 
 ## Setup
 
@@ -37,7 +37,7 @@ An active paid plan is required, Lite or above. The 7 day free trial counts.
     ```
   </Tab>
   <Tab title="Claude Desktop">
-    Go to **Settings** then **Connectors**, click **Add custom connector**, name it Snapto, and paste the URL.
+    Connect over OAuth so there is no token to paste. Go to **Settings** then **Connectors**, click **Add custom connector**, and enter `https://snapto.link/api/mcp`. See [Connect from Claude with OAuth](#connect-from-claude-with-oauth) below.
   </Tab>
   <Tab title="Cursor">
     Go to **Settings** then **MCP** then **Add server**. Choose the HTTP transport and paste the same URL. The **Connect** dialog on the Agents settings page also gives you a one-click install link.
@@ -60,6 +60,18 @@ An active paid plan is required, Lite or above. The 7 day free trial counts.
     ```
   </Tab>
 </Tabs>
+
+## Connect from Claude with OAuth
+
+Claude, on the web and desktop, can connect over OAuth instead of a key-in-URL token, so there is no secret to paste or rotate. In Claude, go to **Settings** then **Connectors**, click **Add custom connector**, and enter the OAuth endpoint:
+
+```
+https://snapto.link/api/mcp
+```
+
+Claude registers itself and sends you to a Snapto consent screen. Approve it and the connection is live. Claude groups the tools into read-only and write, so you can decide what it may do on its own.
+
+Manage these connections from **Settings** then **Connected apps** in your Snapto dashboard. Revoking one cuts off the agent immediately.
 
 ## Try it
 
