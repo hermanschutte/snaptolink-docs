@@ -54,7 +54,7 @@ Requires `elements:write`.
 | `name` | No | The label. Max 255. |
 | `content` | No | The destination. Max 255. |
 | `description` | No | Optional description. |
-| `order` | No | Position in its list. Links and headers share one list, and other types have their own. Omit it and the element is appended to the end of its list. |
+| `order` | No | Position in its list. Links and headers are one list; social icons, phone, email and contact card are another. Omit it and the element is appended to the end of its list. |
 
 Creating a link counts against your plan's link limit.
 
@@ -97,7 +97,7 @@ curl -X POST https://snapto.link/api/v1/elements/reorder \
   }'
 ```
 
-Requires `elements:write`. The array order becomes the display order. Every id must belong to the given profile.
+Requires `elements:write`. The array order becomes the display order. Every id must belong to the given profile. Send every link and header of the profile in page order, because ids you leave out keep their old positions. The social icons are a separate list.
 
 ## Delete an element
 
